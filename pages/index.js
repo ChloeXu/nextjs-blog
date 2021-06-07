@@ -1,33 +1,53 @@
 
 import Head from 'next/head'
 import Link from 'next/link'
+import Date from '../components/date'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
+import { getSortedPostsData } from '../lib/posts'
 
-export default function Home() {
-  return (
-    <Layout home>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section className={utilStyles.headingMd}>
-        <p>Hello! This is Chloe, welcome to my blog site!</p>
+export async function getStaticProps() {
+    const allPostsData = getSortedPostsData()
+    return {
+        props: {
+            allPostsData
+        }
+    }
+}
 
-        <h4 className="title">
-          Read{' '}
-          <Link href="/posts/first-post">
-            <a>this page!</a>
-          </Link>
+export default function Home({ allPostsData }) {
+    return (
+        <Layout home>
+            <Head>
+                <title>{siteTitle}</title>
+            </Head>
+            <section className={utilStyles.headingMd}>
+                <p>Hello! This is Chloe, welcome to my blog site!</p>
+
+                <h4 className="title">
+                    Chloe's blogs
         </h4>
-
-      </section>
-      <footer>
-        <p>
-          Built with <a href="https://nextjs.org/learn">Next.js</a>
-        </p>
-      </footer>
-    </Layout>
-  )
+                <ul className={utilStyles.list}>
+                    {allPostsData.map(({ id, date, title }) => (
+                        <li className={utilStyles.listItem} key={id}>
+                            <Link href={`/posts/${id}`}>
+                                <a>{title}</a>
+                            </Link>
+                            <br />
+                            <small className={utilStyles.lightText}>
+                                <Date dateString={date} />
+                            </small>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+            <footer>
+                <p>
+                    Built with <a href="https://nextjs.org/learn">Next.js</a>
+                </p>
+            </footer>
+        </Layout>
+    )
 }
 
 // import Head from 'next/head'
